@@ -1,0 +1,3 @@
+interface:
+  display_name: "App Optimize"
+  short_description: "Measure app performance and safely remove unused code"
