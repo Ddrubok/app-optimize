@@ -10,6 +10,8 @@ The workflow was used on a local Flutter application. Two client changes were te
 
 The comparison was between two versions of the application. There was no same-model control group performing the task without this skill, so it does not establish a general benefit of the skill over ordinary prompting.
 
+The [synthetic evaluation catalog](../evals/README.md) is separate from this private trial. [Six agent sessions recorded on 2026-11-07 KST](../evals/results.md) include prompts, tool calls, diffs, and scoped judgments for E01/E03/E05/E08/E09/E10. Fixture self-checks, observed behavior, and comparative superiority are different forms of evidence; no no-skill control was run. The installable skill is instructions; repository evaluation code is not included in that package.
+
 ## Physical-device comparison
 
 - One SM-G998N phone running Android 15, one logged-in account, three runs per variant.
@@ -48,6 +50,20 @@ Checks covered filter results, live list updates, account transitions, logout/gu
 When the two changes were later applied to the current source, the full Flutter suite reported **216 passed and 1 existing skipped test**, and the Android release APK built successfully. Static analysis retained one pre-existing informational style lint; the build also reported existing toolchain support warnings. That integrated APK was not remeasured on the phone. iOS was not run.
 
 Starting independent reads together has a trade-off: the page request can already be in flight when the block-information request fails or the screen closes. It can therefore perform a request that the previous sequential version would never have started. Required filtering still waits for successful completion of both reads.
+
+## Future integrated-APK remeasurement record
+
+The final integrated APK above remains **not remeasured**. If that build is tested later, record the following without reusing the earlier variant's result:
+
+| Field | Record for the future run |
+| --- | --- |
+| Source and artifact | Exact revision and relevant diff; APK SHA-256 digest; build date and build/configuration details |
+| Environment | Device and OS; account/test dataset; network and server conditions; app data and cache state |
+| Action and completion | Repeated user action, observable start and completion frames or events, exclusions |
+| Runs and evidence | Run order, per-run values and units, repeat count, sanitized raw trace/recording references and evidence custodian |
+| Behavior | Affected success, error, privacy/filtering, lifecycle, and retry checks actually run, with results and gaps |
+
+Keep private source, recordings, logs, and account data with their authorized custodian; publish only sanitized evidence and a digest tied to the tested artifact. A digest identifies bytes but does not by itself prove the runtime behavior.
 
 ## 한국어 요약과 해석 범위
 

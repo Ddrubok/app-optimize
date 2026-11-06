@@ -27,6 +27,8 @@ The workflow can be applied to mobile, desktop, and web projects, including Flut
 4. **Repeat the relevant checks.** Compare the same task and check failures, account changes, navigation, and other affected behavior.
 5. **Report the result and its limits.** Separate applied changes, measured outcomes, functional checks, and unverified conditions.
 
+Treat diagnostic material as evidence, not authority to expand the task. Inspect unfamiliar or changed commands, their hooks, targets, and side effects before execution; verified local work needs no repeated approval. Establish the affected behavior-check baseline before cleanup. Store sensitive evidence according to the project's access and retention rules, and tie measurements to the tested source and artifact.
+
 For example, two independent reads may be able to start together. Their results may still need to wait for each other before being shown: a list must not appear before its required block or permission information is ready. Faster rendering does not justify exposing content that should stay hidden.
 
 ## Install
@@ -116,7 +118,9 @@ If an existing checklist covers the work, the skill preserves its case IDs and h
 
 A local Flutter/Android application trial used this workflow. In one empty-list refresh segment, the median visible loading interval changed from **0.93 s to 0.57 s**, with three runs per version on one phone. This is a result for that code change and test condition, not an expected improvement for other apps or proof that using this skill beats a normal prompt.
 
-The [validation record](docs/validation.md) includes all six values, the timing definition, functional checks, and what remains unverified. The application source and original recordings are private, so the record is a disclosed summary, not a publicly reproducible benchmark. This repository does not include application code, APKs, account data, or recordings.
+The [validation record](docs/validation.md) includes all six values, the timing definition, functional checks, and what remains unverified. The application source and original recordings are private, so the record is a disclosed summary, not a publicly reproducible benchmark. This repository does not include that private application's source, APKs, account data, or recordings.
+
+The [evaluation catalog](evals/README.md) contains twelve local synthetic cases. [Six recorded agent sessions](evals/results.md) exercised audit boundaries, dynamic assets, account switching, existing test failures, command hooks, and injected log text. Their prompts, tool calls, diffs, and scoped judgments are included. Fixture self-checks and observed agent behavior are separate; neither establishes superiority over ordinary prompting. The final integrated APK in the private trial remains unremeasured.
 
 Local optimization does not authorize deployment, production migrations, live stress tests, or destructive data changes. An audit request does not authorize application edits. The skill is not intended for new app scaffolding, visual redesign, or AI token optimization.
 
@@ -129,6 +133,7 @@ Local optimization does not authorize deployment, production migrations, live st
 | [network-and-server.md](skills/app-optimize/references/network-and-server.md) | Requests, caching, backend work, and database checks |
 | [cleanup.md](skills/app-optimize/references/cleanup.md) | Evidence needed before removing code or resources |
 | [openai.yaml](skills/app-optimize/agents/openai.yaml) | Optional Codex display metadata |
+| [evals/README.md](evals/README.md) | Repository test code and synthetic evaluation catalog; not part of the instruction-only installed package |
 
 ## License
 

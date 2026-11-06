@@ -26,7 +26,11 @@ A new speculative feature does not justify keeping an otherwise proven unused pr
 
 ## Make a reversible cleanup
 
+Before removal, reuse relevant behavior-check results for the same source and environment, or run the smallest affected checks to establish the baseline. Record existing failures separately from new regressions. This is a functional baseline, not a timing benchmark or a requirement to run every build and test. If a needed check cannot run, record that gap before editing and retain candidates whose safe removal depends on it.
+
 Remove one coherent set at a time. Preserve unrelated edits and keep cleanup separate from behavior/performance experiments. For an unused dependency, use the project's package manager and verify the manifest and lockfile change together; do not combine cleanup with broad dependency upgrades. Package use includes command-line tools, plugins, type support, and native build integration.
+
+Before using an unfamiliar or changed generator, package-manager command, build, or test script, inspect its definition and relevant lifecycle hooks and confirm its environment and side effects. A local command name does not establish a local-only target. Use the command checks in [Measurement and tools](measurement-and-tools.md) when this needs closer inspection.
 
 Removing redundant code requires checking side effects, call order, asynchronous behavior, and exceptional paths, not only matching text. Do not remove security checks, validation, error recovery, accessibility behavior, compatibility branches, or transaction boundaries to make the code shorter. Test-only use is still use; investigate a stale test separately instead of deleting it to justify the cleanup.
 

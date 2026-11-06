@@ -21,6 +21,8 @@ Choose caching deliberately. A key may need user/tenant, permissions, locale, fi
 
 For client changes, verify out-of-order responses, navigation away, offline/reconnect, duplicate actions, and loading/error states when the change affects them. Choose relevant cases; do not run a full network matrix for an isolated edit.
 
+Concurrent reads must not publish protected content before required permission or block information succeeds. Discard responses from an obsolete account/session before updating either visible state or shared caches; clearing a cache at logout alone does not prevent a pending response from repopulating it.
+
 ## Server and database
 
 Locate actual work before replacing an implementation:
