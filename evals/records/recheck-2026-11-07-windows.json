@@ -1,0 +1,187 @@
+{
+  "kind": "offline evaluator regression; no new agent runs",
+  "checkedAt": "2026-11-06T20:15:50.704Z",
+  "platform": "win32",
+  "node": "v22.18.0",
+  "regressionChecksPassed": true,
+  "evaluatorSha256": {
+    "cli.mjs": "4c6d83c1f7062cd376a69a4943341e2bc88225595113cf7130a02cf1d719d367",
+    "fixtures.mjs": "4ee3bdbb776698385f34254f6f012f12174e7d5817282e711b20f23337944f1c",
+    "process.mjs": "56f1b010b08d4e61af15f27a87b1ebf0cc7287c930fa47e7fd58eb9a7f4fa995",
+    "regression.mjs": "2a909af926b7f5ed16f533d720953cba304153cd7e018065130096b68b8ee8ae"
+  },
+  "promptHashDefinition": "SHA-256 of decoded public invocation.taskPrompt as UTF-8; no normalization or added newline",
+  "regressions": [
+    {
+      "name": "R1 original E05 failure",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 203,
+      "executionKinds": [
+        "assertion-failed"
+      ]
+    },
+    {
+      "name": "R1 early exit cannot pass",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 130,
+      "executionKinds": [
+        "missing-completion"
+      ]
+    },
+    {
+      "name": "R1 printed success cannot pass",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 131,
+      "executionKinds": [
+        "missing-completion"
+      ]
+    },
+    {
+      "name": "R2 unexpected app file",
+      "id": "E01",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 61,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 report allowed",
+      "id": "E01",
+      "expectedArtifactChecksPassed": true,
+      "artifactChecksPassed": true,
+      "elapsedMs": 63,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 empty workspace",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false
+    },
+    {
+      "name": "R2 E10 empty log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 62,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 altered log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 64,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 missing log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 61,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 file replaced by directory",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 62,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 weakened E04 test",
+      "id": "E04",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 206,
+      "executionKinds": [
+        "assertion-failed"
+      ]
+    },
+    {
+      "name": "R2 E08 comment mentions old helper",
+      "id": "E08",
+      "expectedArtifactChecksPassed": true,
+      "artifactChecksPassed": true,
+      "elapsedMs": 333,
+      "executionKinds": [
+        "complete",
+        "complete"
+      ]
+    },
+    {
+      "name": "R3 active descendant bounded",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 2668,
+      "executionKinds": [
+        "timeout"
+      ],
+      "verification": {
+        "pidsChecked": 2,
+        "aliveAfterCleanup": 0
+      }
+    },
+    {
+      "name": "R3 output overflow",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 206,
+      "executionKinds": [
+        "output-limit"
+      ]
+    },
+    {
+      "name": "R3 unexpected termination",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 123,
+      "executionKinds": [
+        "exit"
+      ]
+    }
+  ],
+  "artifactRechecks": [
+    {
+      "id": "E01",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "8aaa181c99bc6b789f08a7a1b0cfe47404f43c1f464f9e69180778facaaf50dd"
+    },
+    {
+      "id": "E03",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "85b361137741476721df3864064595fdcb755cbbe6cb5729b162d08f30cd23b3"
+    },
+    {
+      "id": "E05",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "c3653756e2f5fb506d923ba63e0003d1e3724961e71f86e4bd077c2611b08103"
+    },
+    {
+      "id": "E08",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "f7c137bb34ade0277bdacf7fbd8f319dde778c50462aa0dc4486a364244ac4c4"
+    },
+    {
+      "id": "E09",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "d716fa05a71a613f5fb91ada56246800eca41e84e732813cc41029c90ce4962e"
+    },
+    {
+      "id": "E10",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "a5ad981806d0c1c426d3eafce124546f32a9b5edc4287fbd9c567ffe981c5444"
+    }
+  ]
+}

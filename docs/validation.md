@@ -1,6 +1,6 @@
 # Validation record and limits
 
-[English guide](../README.md) | [한국어 안내](../README.ko.md)
+[English](validation.md) | [한국어](validation.ko.md) | [Root guide](../README.md)
 
 Publication prepared on 2026-11-03. Application measurements below were recorded on 2026-11-02. No new app benchmark was run for publication.
 
@@ -64,19 +64,3 @@ The final integrated APK above remains **not remeasured**. If that build is test
 | Behavior | Affected success, error, privacy/filtering, lifecycle, and retry checks actually run, with results and gaps |
 
 Keep private source, recordings, logs, and account data with their authorized custodian; publish only sanitized evidence and a digest tied to the tested artifact. A digest identifies bytes but does not by itself prove the runtime behavior.
-
-## 한국어 요약과 해석 범위
-
-2026-11-02에 실제 Flutter 앱의 두 부분을 비교했습니다. 동호회는 필터를 바꿀 때 기존 데이터 연결을 재사용하도록 바꿨고, 소셜링은 차단 정보와 목록을 함께 조회하되 둘 다 성공한 뒤 표시하도록 바꿨습니다. 2026-11-03 공개 준비에서는 앱 성능을 새로 측정하지 않았습니다.
-
-위 표는 휴대폰 1대·계정 1개에서 기준본과 개선본을 각각 3회 녹화한 값입니다. 소셜링은 결과가 없는 목록이었고, 로딩 시작부터 빈 결과 안내가 돌아올 때까지를 쟀습니다. 손가락의 드래그, 상단 새로고침 표시의 마지막 애니메이션, 사진이 전부 뜨는 시간은 제외했습니다. 원본 영상의 프레임 표시 시각으로 계산했으며 앱 데이터와 캐시는 유지했습니다.
-
-소셜링 중앙값은 930.300ms에서 565.956ms로 약 364ms·39% 감소했습니다. 해당 조건의 특정 구간 결과입니다. 동호회 첫 진입은 약 9ms 차이여서 체감 향상을 단정하기 어렵습니다. 표의 `Not observed`는 녹화에서 별도 로딩 프레임이 보이지 않았다는 뜻이며, 처리 시간이 0이라는 뜻이 아닙니다.
-
-로컬 테스트에서는 200ms와 120ms로 설정한 모의 응답을 순서대로 기다리던 320ms가, 함께 기다리는 200ms로 바뀌었습니다. 필터 두 번 변경과 같은 사용자 알림에 따른 추가 구독도 12회에서 0회로 줄었습니다. 이 값은 실제 서버 응답 시간이나 과금 읽기 횟수가 아닙니다. 주요 비교는 각각 3회 실행했습니다.
-
-나중에 최신 원본에 반영한 뒤에는 Flutter 테스트 216개 통과·기존 제외 1개와 Android 릴리스 빌드 성공을 확인했습니다. 기존 코드의 스타일 안내 1건과 빌드 도구의 향후 지원 종료 안내는 남았습니다. 이 최종 APK의 휴대폰 재측정과 iOS 실행은 하지 않았습니다.
-
-동시 조회에는 비용도 있습니다. 차단 조회가 실패하거나 화면을 닫아도 목록 요청이 이미 진행 중일 수 있습니다. 표시에는 두 조회의 성공이 필요하지만, 기존 순차 방식에서는 보내지 않았을 요청을 한 번 더 보낼 가능성이 있습니다.
-
-앱 소스·원본 녹화·로그는 비공개이므로 외부에서 이 페이지의 수치만으로 앱 동작까지 재현할 수는 없습니다. 독립된 사람의 측정이나 스킬 미사용 대조군도 없습니다. 앱 전체 속도, 다른 앱의 기대 향상률, 서버 비용·메모리·배터리 개선, 스킬 자체의 일반적인 우수성으로 확대해서 해석하지 마세요.

@@ -122,6 +122,8 @@ The [validation record](docs/validation.md) includes all six values, the timing 
 
 The [evaluation catalog](evals/README.md) contains twelve local synthetic cases. [Six recorded agent sessions](evals/results.md) exercised audit boundaries, dynamic assets, account switching, existing test failures, command hooks, and injected log text. Their prompts, tool calls, diffs, and scoped judgments are included. Fixture self-checks and observed agent behavior are separate; neither establishes superiority over ordinary prompting. The final integrated APK in the private trial remains unremeasured.
 
+The revised checker rejects early exits without completed checks, detects missing or unauthorized workspace changes, and limits child execution time and output with process-tree cleanup. Artifact results remain separate from the final behavior judgment. [Checker repair results](evals/results.md#checker-repair-and-artifact-recheck--2026-11-07-kst) record 15 regression checks and rechecks of six historical artifacts passing on both Windows and WSL Linux. These are checker tests and artifact rechecks, not new agent sessions or app benchmarks.
+
 Local optimization does not authorize deployment, production migrations, live stress tests, or destructive data changes. An audit request does not authorize application edits. The skill is not intended for new app scaffolding, visual redesign, or AI token optimization.
 
 ## Package contents

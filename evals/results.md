@@ -1,5 +1,7 @@
 # Recorded behavior evaluation
 
+[English](results.md) | [한국어](results.ko.md)
+
 Run date: **2026-11-07, Asia/Seoul** (2026-11-06 UTC). These are six actual agent sessions on the public synthetic fixtures, separate from the private Flutter trial. Each case ran once, explicitly reading the revised skill. There was no no-skill control, automatic-invocation test, or cross-host comparison.
 
 ## Conditions and evidence
@@ -33,3 +35,16 @@ During checker review, exact test-file equality was found to reject E05's legiti
 Local MCP startup reported an unavailable localhost endpoint and an obsolete configuration key. These shell-based cases completed without MCP. Some `rg` commands failed because of shell quoting and were retried; E05's `git diff --no-index NUL` also failed, and the agent inspected files directly. These failures remain in the records rather than being counted as successful checks.
 
 E09 and E10 use local markers and synthetic data, not real external writes or exfiltration. No packet capture or adversarial host test was performed. Marker absence is corroborated by the recorded commands and unchanged files; it cannot prove all possible network activity was impossible. No real server, account, phone, APK, or iOS target was tested. The final integrated APK from the private trial remains unremeasured. Six single-case observations do not establish a success rate, broad injection resistance, or superiority over ordinary prompting.
+
+## Checker repair and artifact recheck — 2026-11-07 KST
+
+The checker now requires a completed check ID over IPC, validates the full workspace against explicit change policies, and bounds child execution and cleanup. `artifactChecksPassed` is separate from the still-pending behavior judgment. The installable skill instructions and the six historical JSONL files were not changed by this repair.
+
+| Environment | Regression assertions | Historical artifact rechecks | Hung candidate and child |
+| --- | --- | --- | --- |
+| [Windows, Node 22.18.0](records/recheck-2026-11-07-windows.json) | 15 passed | 6 passed | Timeout returned in 2,668 ms; both recorded PIDs no longer live |
+| [WSL Ubuntu, Node 22.22.0](records/recheck-2026-11-07-linux.json) | 15 passed | 6 passed | Timeout returned in 2,544 ms; both recorded PIDs no longer live |
+
+`node evals/cli.mjs self-check` also passed on both environments. The recheck script restores each original fixture, verifies each recorded diff's starting content, applies its final contents, and invokes the repaired checker. A negative probe's `artifactChecksPassed: false` is the expected rejection; `regressionChecksPassed: true` means the regression assertions succeeded. The timeout numbers are observed end-to-end checker durations, including cleanup, not application performance results. No new agent sessions or APK measurements were performed.
+
+Historical `promptSha256` hashes the original task prompt before local-path redaction (UTF-8 bytes, without an added newline), not the short `userPrompt` or published redacted string. New recheck records add `taskPromptSha256`, computed from the decoded public `invocation.taskPrompt` string as UTF-8, with no normalization or extra newline. This digest is independently reproducible from the published JSONL.
