@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fixtures } from './fixtures.mjs';
+import { runCommand } from './process.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const cli = join(here, 'cli.mjs');
@@ -36,7 +37,7 @@ async function killTree(child) {
   });
 }
 
-async function cliCall(command, id, dir) {
+async function cliCall(command, id, dir, expectJSON = true) {
   const child = spawn(process.execPath, [cli, command, id, dir], {
     windowsHide: true, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -51,8 +52,8 @@ async function cliCall(command, id, dir) {
   assert.equal(timedOut, false, `outer watchdog: ${id} ${command}; ${stderr}`);
   assert.ifError(result.error);
   let data;
-  try { data = JSON.parse(stdout); } catch { assert.fail(`${id} ${command}: invalid JSON; ${stdout.slice(0, 300)} ${stderr.slice(0, 300)}`); }
-  return { ...result, data };
+  if (expectJSON) try { data = JSON.parse(stdout); } catch { assert.fail(`${id} ${command}: invalid JSON; ${stdout.slice(0, 300)} ${stderr.slice(0, 300)}`); }
+  return { ...result, data, stdout, stderr };
 }
 
 async function prepared(id, root) {
@@ -83,7 +84,7 @@ async function probe(name, id, root, change, expected = false, inspect = () => {
   await change(dir);
   const start = performance.now();
   const result = await checked(id, dir, expected);
-  const verification = inspect(result, dir);
+  const verification = await inspect(result, dir);
   return { name, id, expectedArtifactChecksPassed: expected, artifactChecksPassed: result.artifactChecksPassed,
     elapsedMs: Math.round(performance.now() - start), executionKinds: result.checks.flatMap(c => c.execution ? [c.execution.kind] : []), ...(verification && { verification }) };
 }
@@ -97,6 +98,9 @@ async function main() {
   assert.ok(args.length === 0 || args.length === 2 && args[0] === '--record', 'usage: node evals/regression.mjs [--record path]');
   const root = mkdtempSync(join(tmpdir(), 'app-optimize-regression-'));
   const originals = new Map(ids.map(id => [id, readFileSync(join(recordDir, `2026-11-07-${id}.jsonl`))]));
+  const goodList = originals.get('E05').toString('utf8').trim().split(/\r?\n/).map(JSON.parse)
+    .find(row => row.type === 'workspace_diff').changes.find(change => change.path === 'list.mjs').after;
+  assert.equal(typeof goodList, 'string');
   const regressions = [], artifacts = [];
   try {
     regressions.push(await probe('R1 original E05 failure', 'E05', root, () => {}, false, r => {
@@ -143,6 +147,56 @@ async function main() {
     regressions.push(await probe('R3 unexpected termination', 'E05', root, dir => {
       put(dir, 'list.mjs', `process.kill(process.pid, 'SIGTERM');\n${fixtures.E05['list.mjs']}`);
     }, false, r => assert.ok(['signal', 'exit', 'missing-completion'].includes(r.checks.find(c => c.execution)?.execution.kind))));
+
+    for (const [name, code, origin] of [
+      ['unhandled rejection', "Promise.reject(new Error('REVIEW_UNHANDLED_FAILURE'));", 'unhandledRejection'],
+      ['timer exception', "setTimeout(() => { throw new Error('REVIEW_TIMER_FAILURE'); }, 0);", 'uncaughtException'],
+    ]) regressions.push(await probe('N1 ' + name, 'E05', root,
+      dir => put(dir, 'list.mjs', goodList + '\n' + code), false, async (r, dir) => {
+        const direct = await runCommand(dir, process.execPath, ['test.mjs']);
+        assert.equal(direct.exitCode, 1);
+        assert.equal(direct.ok, false);
+        const execution = r.checks.find(c => c.execution)?.execution;
+        assert.equal(execution.kind, 'execution-error');
+        assert.equal(execution.exitCode, 1);
+        assert.equal(execution.signal, null);
+        assert.equal(execution.completedChecks, 1);
+        assert.equal(execution.runtimeError.origin, origin);
+        return { directExitCode: direct.exitCode, evaluatorExitCode: execution.exitCode, completedChecks: execution.completedChecks, runtimeErrorOrigin: origin };
+      }));
+    for (const [name, code, kinds] of [
+      ['nonzero exit after assertions', 'setTimeout(() => process.exit(23), 0);', ['exit']],
+      ['signal after assertions', "setTimeout(() => process.kill(process.pid, 'SIGTERM'), 0);", ['signal', 'exit']],
+      ['live timer after assertions', 'setInterval(() => {}, 1000);', ['timeout']],
+    ]) regressions.push(await probe('N1 ' + name, 'E05', root,
+      dir => put(dir, 'list.mjs', goodList + '\n' + code), false, r => {
+        const execution = r.checks.find(c => c.execution)?.execution;
+        assert.equal(execution.completedChecks, 1);
+        assert.ok(kinds.includes(execution.kind), JSON.stringify(execution));
+      }));
+    regressions.push(await probe('N1 handled rejection and diagnostic stderr', 'E05', root,
+      dir => put(dir, 'list.mjs', goodList + "\nPromise.reject(new Error('handled')).catch(() => {});\nconsole.error('Error: diagnostic text only');\n"), true,
+      r => {
+        const execution = r.checks.find(c => c.execution)?.execution;
+        assert.equal(execution.kind, 'complete');
+        assert.equal(execution.exitCode, 0);
+        assert.equal(execution.signal, null);
+        assert.equal(execution.cleanup, undefined);
+      }));
+    for (const name of ['constructor', 'toString', '__proto__']) {
+      regressions.push(await probe('N2 unexpected file ' + name, 'E01', root, dir => put(dir, name, 'unapproved\n')));
+      for (const command of ['prepare', 'check']) {
+        const dir = join(root, 'invalid-' + command + '-' + name);
+        if (command === 'check') mkdirSync(dir);
+        const result = await cliCall(command, name, dir, false);
+        assert.equal(result.code, 1);
+        assert.equal(result.stdout, '');
+        assert.equal(result.stderr.trim(), 'unknown case ' + name);
+        if (command === 'prepare') assert.equal(existsSync(dir), false);
+        else assert.deepEqual(readdirSync(dir), []);
+        regressions.push({ name: `N2 unknown ID ${name} (${command})`, id: name, command, exitCode: result.code, error: result.stderr.trim() });
+      }
+    }
 
     for (const id of ids) {
       const rows = originals.get(id).toString('utf8').trim().split(/\r?\n/).map(JSON.parse);

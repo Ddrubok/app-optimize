@@ -27,16 +27,24 @@ function errorFields(error) {
 }
 
 if (process.argv[2] === '--evals-worker') {
-  process.on('message', async message => {
+  process.once('message', async message => {
     if (message?.type !== 'start') return;
+    process.channel.ref();
+    // Observe fatal errors without suppressing Node's default failure exit.
+    process.on('uncaughtExceptionMonitor', (caught, origin) => {
+      if (process.connected) process.send({ type: 'runtime-error', id: message.id, error: { ...errorFields(caught), origin } });
+    });
     let error = null;
     try {
       await import(`data:text/javascript;base64,${Buffer.from(message.source).toString('base64')}`);
     } catch (caught) {
       error = errorFields(caught);
     }
-    process.send?.({ type: 'completion', id: message.id, error });
-    // Keep the process tree attached until the supervisor consumes this verdict.
+    process.send({ type: 'completion', id: message.id, error }, sendError => {
+      if (sendError) process.exitCode = 1;
+      // Candidate work must drain naturally; evaluator IPC must not keep it alive.
+      process.channel?.unref();
+    });
   });
 }
 
@@ -82,6 +90,7 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
     let bytes = 0;
     let reason = null;
     let verdict = null;
+    let runtimeError = null;
     let completions = 0;
     let exitCode = null;
     let signal = null;
@@ -93,13 +102,10 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
 
     const startCleanup = async why => {
       if (finished) return;
-      if (cleaning) {
-        if (why !== 'verdict') reason = why;
-        return;
-      }
+      if (cleaning) return;
       cleaning = true;
       reason = why;
-      cleanup = { ...await killTree(child), reason: why === 'verdict' ? 'evaluator-cleanup' : why };
+      cleanup = { ...await killTree(child), reason: why };
       let closeTimer;
       const closeTimedOut = await Promise.race([
         closed.then(() => false),
@@ -125,22 +131,20 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
           key === 'message' ? verdict.error.message?.split('\n', 1)[0] === value : Object.is(verdict.error[key], value))
           && Object.keys(verdict.error).filter(key => verdict.error[key] !== undefined).every(key => Object.hasOwn(expected, key))
         : verdict?.error === null);
-      const ok = isCode
-        ? reason === 'verdict' && complete && matched && cleanup?.ok === true
-        : reason === 'exit' && exitCode === 0 && signal === null;
+      const ok = reason === 'exit' && exitCode === 0 && signal === null
+        && (!isCode || complete && matched && !runtimeError);
       let kind = reason;
-      if (reason === 'exit' && signal) kind = 'signal';
+      if (reason === 'exit' && runtimeError) kind = 'execution-error';
+      else if (reason === 'exit' && signal) kind = 'signal';
       else if (reason === 'exit' && exitCode !== 0) kind = 'exit';
       else if (reason === 'exit' && isCode && !complete) kind = 'missing-completion';
-      else if (reason === 'verdict' && !complete) kind = 'protocol-error';
-      else if (reason === 'verdict' && !matched) kind = expected
+      else if (reason === 'exit' && isCode && !matched) kind = expected
         ? (verdict?.error === null ? 'expected-error-missing' : 'expected-error-mismatch')
         : (verdict?.error?.code === 'ERR_ASSERTION' ? 'assertion-failed' : 'execution-error');
-      else if (reason === 'verdict' && cleanup?.ok !== true) kind = 'cleanup-error';
-      else if (reason === 'verdict') kind = 'complete';
-      resolve({ ok, kind, exitCode, signal, errorCode: errorCode ?? verdict?.error?.code ?? null,
+      else if (reason === 'exit' && isCode) kind = 'complete';
+      resolve({ ok, kind, exitCode, signal, errorCode: errorCode ?? runtimeError?.code ?? verdict?.error?.code ?? null,
         stdout, stderr, completedChecks: isCode && complete && matched ? 1 : 0,
-        ...(verdict?.error && { error: verdict.error }), ...(cleanup && { cleanup }) });
+        ...(verdict?.error && { error: verdict.error }), ...(runtimeError && { runtimeError }), ...(cleanup && { cleanup }) });
     };
     const timer = setTimeout(() => startCleanup('timeout'), LIMIT_MS);
     const capture = (stream, chunk) => {
@@ -162,6 +166,10 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
     child.once('close', () => { if (!cleaning) finish(); });
     if (isCode) {
       child.on('message', message => {
+        if (message?.type === 'runtime-error' && message.id === codeId) {
+          runtimeError = message.error;
+          return;
+        }
         if (message?.type !== 'completion' || message.id !== codeId) {
           startCleanup('protocol-error');
           return;
@@ -169,7 +177,6 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
         completions++;
         verdict = message;
         if (completions !== 1) startCleanup('protocol-error');
-        else startCleanup('verdict');
       });
       child.send({ type: 'start', id: codeId, source: source.text }, error => {
         if (error && !cleaning && !finished) { errorCode = error.code; startCleanup('ipc-error'); }
@@ -179,7 +186,7 @@ function execute(cwd, command, args, { codeId, source, shell = false } = {}) {
 }
 
 export async function runCode(cwd, id, source, expectedError = null) {
-  return execute(cwd, process.execPath, [workerFile, '--evals-worker'], {
+  return execute(cwd, process.execPath, ['--unhandled-rejections=strict', workerFile, '--evals-worker'], {
     codeId: id, source: { text: source, expectedError },
   });
 }

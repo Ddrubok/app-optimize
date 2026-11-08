@@ -48,3 +48,12 @@ The checker now requires a completed check ID over IPC, validates the full works
 `node evals/cli.mjs self-check` also passed on both environments. The recheck script restores each original fixture, verifies each recorded diff's starting content, applies its final contents, and invokes the repaired checker. A negative probe's `artifactChecksPassed: false` is the expected rejection; `regressionChecksPassed: true` means the regression assertions succeeded. The timeout numbers are observed end-to-end checker durations, including cleanup, not application performance results. No new agent sessions or APK measurements were performed.
 
 Historical `promptSha256` hashes the original task prompt before local-path redaction (UTF-8 bytes, without an added newline), not the short `userPrompt` or published redacted string. New recheck records add `taskPromptSha256`, computed from the decoded public `invocation.taskPrompt` string as UTF-8, with no normalization or extra newline. This digest is independently reproducible from the published JSONL.
+
+## Checker recheck — 2026-11-08 KST
+
+| Environment | Regression probes | Restored historical artifacts |
+| --- | --- | --- |
+| [Windows, Node 22.18.0](records/recheck-2026-11-08-windows.json) | 30 passed | 6 passed |
+| [WSL Ubuntu, Node 22.22.0](records/recheck-2026-11-08-linux.json) | 30 passed | 6 passed |
+
+The 30 probes per platform comprise the original 15, six N1 runtime probes, and nine N2 inherited-property probes. N1 now requires IPC completion **and** a process exit with code 0, no signal, and no runtime error; IPC completion no longer triggers cleanup. Unhandled rejection and timer-exception probes each exit 1 both directly under Node and through the evaluator. N2 rejects `constructor`, `toString`, and `__proto__` as unexpected E01 files and as invalid `prepare`/`check` IDs. Invalid IDs create no workspace or success output. `node evals/cli.mjs self-check` also passed for all 12 fixtures on both platforms. These are checker tests and rechecks, not new agent sessions or APK measurements. The 2026-11-07 records remain unchanged; each recheck record's source hashes identify its own checker revision.

@@ -28,7 +28,7 @@ const files = dir => {
   });
   return walk(dir).sort();
 };
-const fixture = id => fixtures[id] ?? fail(`unknown case ${id}`);
+const fixture = id => Object.hasOwn(fixtures, id) ? fixtures[id] : fail(`unknown case ${id}`);
 function runOriginalTest(id, dir, expectedError = null) {
   // Run evaluator-owned assertions against the candidate modules. An agent may
   // legitimately extend its test file; inspect that diff separately for weakening.
@@ -67,7 +67,7 @@ function inspectWorkspace(id, dir) {
       } else if (!entry.isFile()) issues.push('not a regular file: ' + name);
       else {
         inventory.push(name);
-        if (!(name in original) && !name.startsWith('.orca/') && !reportFile(name)) issues.push('unexpected file: ' + name);
+        if (!Object.hasOwn(original, name) && !name.startsWith('.orca/') && !reportFile(name)) issues.push('unexpected file: ' + name);
       }
     }
   };

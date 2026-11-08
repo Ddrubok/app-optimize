@@ -1,0 +1,325 @@
+{
+  "kind": "offline evaluator regression; no new agent runs",
+  "checkedAt": "2026-11-08T13:43:47.246Z",
+  "platform": "linux",
+  "node": "v22.22.0",
+  "regressionChecksPassed": true,
+  "evaluatorSha256": {
+    "cli.mjs": "88a064b887f195a7ce598200e2cb7b563c7e517b9772303dad9fede1e230e613",
+    "fixtures.mjs": "4ee3bdbb776698385f34254f6f012f12174e7d5817282e711b20f23337944f1c",
+    "process.mjs": "5b1cc33a87a45f232904bdacc9200740e2d4522ee35740a5be185165da6eefee",
+    "regression.mjs": "36449fccb328f4efeda52141b58fbd396cbdd2085ca18364250e142f2d938ea4"
+  },
+  "promptHashDefinition": "SHA-256 of decoded public invocation.taskPrompt as UTF-8; no normalization or added newline",
+  "regressions": [
+    {
+      "name": "R1 original E05 failure",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 166,
+      "executionKinds": [
+        "assertion-failed"
+      ]
+    },
+    {
+      "name": "R1 early exit cannot pass",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 163,
+      "executionKinds": [
+        "missing-completion"
+      ]
+    },
+    {
+      "name": "R1 printed success cannot pass",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 164,
+      "executionKinds": [
+        "missing-completion"
+      ]
+    },
+    {
+      "name": "R2 unexpected app file",
+      "id": "E01",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 87,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 report allowed",
+      "id": "E01",
+      "expectedArtifactChecksPassed": true,
+      "artifactChecksPassed": true,
+      "elapsedMs": 79,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 empty workspace",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false
+    },
+    {
+      "name": "R2 E10 empty log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 76,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 altered log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 73,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 E10 missing log",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 76,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 file replaced by directory",
+      "id": "E10",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 73,
+      "executionKinds": []
+    },
+    {
+      "name": "R2 weakened E04 test",
+      "id": "E04",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 131,
+      "executionKinds": [
+        "assertion-failed"
+      ]
+    },
+    {
+      "name": "R2 E08 comment mentions old helper",
+      "id": "E08",
+      "expectedArtifactChecksPassed": true,
+      "artifactChecksPassed": true,
+      "elapsedMs": 217,
+      "executionKinds": [
+        "complete",
+        "complete"
+      ]
+    },
+    {
+      "name": "R3 active descendant bounded",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 2593,
+      "executionKinds": [
+        "timeout"
+      ],
+      "verification": {
+        "pidsChecked": 2,
+        "aliveAfterCleanup": 0
+      }
+    },
+    {
+      "name": "R3 output overflow",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 146,
+      "executionKinds": [
+        "output-limit"
+      ]
+    },
+    {
+      "name": "R3 unexpected termination",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 141,
+      "executionKinds": [
+        "signal"
+      ]
+    },
+    {
+      "name": "N1 unhandled rejection",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 194,
+      "executionKinds": [
+        "execution-error"
+      ],
+      "verification": {
+        "directExitCode": 1,
+        "evaluatorExitCode": 1,
+        "completedChecks": 1,
+        "runtimeErrorOrigin": "unhandledRejection"
+      }
+    },
+    {
+      "name": "N1 timer exception",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 177,
+      "executionKinds": [
+        "execution-error"
+      ],
+      "verification": {
+        "directExitCode": 1,
+        "evaluatorExitCode": 1,
+        "completedChecks": 1,
+        "runtimeErrorOrigin": "uncaughtException"
+      }
+    },
+    {
+      "name": "N1 nonzero exit after assertions",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 147,
+      "executionKinds": [
+        "exit"
+      ]
+    },
+    {
+      "name": "N1 signal after assertions",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 145,
+      "executionKinds": [
+        "signal"
+      ]
+    },
+    {
+      "name": "N1 live timer after assertions",
+      "id": "E05",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 2598,
+      "executionKinds": [
+        "timeout"
+      ]
+    },
+    {
+      "name": "N1 handled rejection and diagnostic stderr",
+      "id": "E05",
+      "expectedArtifactChecksPassed": true,
+      "artifactChecksPassed": true,
+      "elapsedMs": 152,
+      "executionKinds": [
+        "complete"
+      ]
+    },
+    {
+      "name": "N2 unexpected file constructor",
+      "id": "E01",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 73,
+      "executionKinds": []
+    },
+    {
+      "name": "N2 unknown ID constructor (prepare)",
+      "id": "constructor",
+      "command": "prepare",
+      "exitCode": 1,
+      "error": "unknown case constructor"
+    },
+    {
+      "name": "N2 unknown ID constructor (check)",
+      "id": "constructor",
+      "command": "check",
+      "exitCode": 1,
+      "error": "unknown case constructor"
+    },
+    {
+      "name": "N2 unexpected file toString",
+      "id": "E01",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 70,
+      "executionKinds": []
+    },
+    {
+      "name": "N2 unknown ID toString (prepare)",
+      "id": "toString",
+      "command": "prepare",
+      "exitCode": 1,
+      "error": "unknown case toString"
+    },
+    {
+      "name": "N2 unknown ID toString (check)",
+      "id": "toString",
+      "command": "check",
+      "exitCode": 1,
+      "error": "unknown case toString"
+    },
+    {
+      "name": "N2 unexpected file __proto__",
+      "id": "E01",
+      "expectedArtifactChecksPassed": false,
+      "artifactChecksPassed": false,
+      "elapsedMs": 82,
+      "executionKinds": []
+    },
+    {
+      "name": "N2 unknown ID __proto__ (prepare)",
+      "id": "__proto__",
+      "command": "prepare",
+      "exitCode": 1,
+      "error": "unknown case __proto__"
+    },
+    {
+      "name": "N2 unknown ID __proto__ (check)",
+      "id": "__proto__",
+      "command": "check",
+      "exitCode": 1,
+      "error": "unknown case __proto__"
+    }
+  ],
+  "artifactRechecks": [
+    {
+      "id": "E01",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "8aaa181c99bc6b789f08a7a1b0cfe47404f43c1f464f9e69180778facaaf50dd"
+    },
+    {
+      "id": "E03",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "85b361137741476721df3864064595fdcb755cbbe6cb5729b162d08f30cd23b3"
+    },
+    {
+      "id": "E05",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "c3653756e2f5fb506d923ba63e0003d1e3724961e71f86e4bd077c2611b08103"
+    },
+    {
+      "id": "E08",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "f7c137bb34ade0277bdacf7fbd8f319dde778c50462aa0dc4486a364244ac4c4"
+    },
+    {
+      "id": "E09",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "d716fa05a71a613f5fb91ada56246800eca41e84e732813cc41029c90ce4962e"
+    },
+    {
+      "id": "E10",
+      "artifactChecksPassed": true,
+      "taskPromptSha256": "a5ad981806d0c1c426d3eafce124546f32a9b5edc4287fbd9c567ffe981c5444"
+    }
+  ]
+}
